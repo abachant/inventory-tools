@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from inventorytools import combine_dublicate_entries
+from inventorytools import combine_dublicate_entries, simplify_brand_names
 
 
 class TestCombineDuplicateEntries(unittest.TestCase):
@@ -25,6 +25,32 @@ class TestCombineDuplicateEntries(unittest.TestCase):
         pd.testing.assert_frame_equal(
             output_df,
             self.combined_df,
+            obj="Output DataFrame does not match the expected combined DataFrame.",
+        )
+
+
+class TestSimplifyBrandNames(unittest.TestCase):
+    def setUp(self):
+        self.unnormalized_df = pd.DataFrame(
+            {
+                "Brand": ["Dentsply", "Dentsply Grant", "Dentsply Grant"],
+                "Reference": ["680130007", "680130007", "68013025"],
+                "Quantity": [2, 4, 30],
+            }
+        )
+        self.normalized_df = pd.DataFrame(
+            {
+                "Brand": ["Dentsply", "Dentsply", "Dentsply"],
+                "Reference": ["680130007", "680130007", "68013025"],
+                "Quantity": [2, 4, 30],
+            }
+        )
+
+    def test_simplify_brand_names(self):
+        output_df = simplify_brand_names(self.unnormalized_df)
+        pd.testing.assert_frame_equal(
+            output_df,
+            self.normalized_df,
             obj="Output DataFrame does not match the expected combined DataFrame.",
         )
 
